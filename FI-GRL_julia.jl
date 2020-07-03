@@ -7,7 +7,7 @@
 #       extension: .jl
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.5.0
+#       jupytext_version: 1.3.4
 #   kernelspec:
 #     display_name: Julia 1.4.2
 #     language: julia
@@ -15,6 +15,11 @@
 # ---
 
 # # FI-GRL (Julia)
+
+using Pkg
+Pkg.add("LightGraphs")
+Pkg.add("GraphIO")
+Pkg.add("Arpack")
 
 using LightGraphs
 using GraphIO.EdgeList
@@ -26,7 +31,7 @@ using Arpack
 #using LightGraphs.LinAlg
 # -
 
-graph = loadgraph("/home/rafael/googledrive/DOC/data/figrl/edgelist", EdgeList.EdgeListFormat())
+graph = loadgraph("/Users/raf/googledrive/DOC/data/figrl/edgelist_charles", EdgeList.EdgeListFormat())
 
 
 #Make network undirected -> convert from SimpleDiGraph to SimpleGraph
@@ -49,7 +54,7 @@ normalized_random_walk = Diagonal(sqrt.(D_inv))*adjmat*Diagonal(sqrt.(D_inv));
 
 #Dim is the intermediate dimension
 dim = 100
-final_dim = 10
+final_dim = 64
 
 S = randn(nv(G),dim) / sqrt(dim)
 C = normalized_random_walk * S
@@ -58,6 +63,12 @@ svd_result, ncov, niter, nmult, resid = svds(C, nsv=final_dim)
 U, sigma, v = svd_result;
 end
 # -
+
+using DelimitedFiles
+writedlm( "/Users/raf/googledrive/DOC/data/figrl/U.csv",  U, ',')
+writedlm( "/Users/raf/googledrive/DOC/data/figrl/sigma.csv",  sigma, ',')
+writedlm( "/Users/raf/googledrive/DOC/data/figrl/v.csv",  v, ',')
+writedlm( "/Users/raf/googledrive/DOC/data/figrl/S.csv", S, ',')
 
 # **randn**: Creates a m-by-n random matrix (of density d) with iid non-zero elements distributed according to the standard normal (Gaussian) distribution.
 #
